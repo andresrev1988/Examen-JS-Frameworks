@@ -37,7 +37,6 @@ function parpadearCandyStop(items) {
     }
     agregaCandy(cuadricula);
   }
-
   //Funcion para eliminar repetidos en un Array
   function arrayUnique(array) {
       var a = array.concat();
@@ -72,11 +71,11 @@ function parpadearCandyStop(items) {
         var imagen = $("#"+(i+columna)).attr("src");
         if(imgClick==imagen){
           eliminarAbajo.push((i+columna));
+
         }else {
           break;
         }
       }
-      console.log("abajo"+eliminarAbajo);
       var eliminarArriba=[];
       for(var i = fila ; i < 8 ; i++){
         var imagen = $("#"+(i+columna)).attr("src");
@@ -86,7 +85,6 @@ function parpadearCandyStop(items) {
           break;
         }
       }
-      console.log("arriba"+eliminarArriba);
       //Elimina Horizontales
       var eliminarDerecha=[];
       for(var i = columna ; i < 8 ; i++){
@@ -97,7 +95,6 @@ function parpadearCandyStop(items) {
           break;
         }
       }
-      console.log("derecha"+eliminarDerecha);
       var eliminarIzquierda=[];
       for(var i = columna ; i >= 1 ; i--){
         var imgen = $("#"+(fila+i)).attr("src");
@@ -107,18 +104,15 @@ function parpadearCandyStop(items) {
           break;
         }
       }
-      console.log("izq"+eliminarIzquierda);
       var eliminarVert=[];
       var eliminarHorz=[];
       eliminarHorz = arrayUnique(eliminarHorz.concat(eliminarIzquierda));
       eliminarHorz = arrayUnique(eliminarHorz.concat(eliminarDerecha));
-      console.log(eliminarHorz);
       if(eliminarHorz.length<3){
         eliminarHorz=[];
       }
       eliminarVert = arrayUnique(eliminarVert.concat(eliminarArriba));
       eliminarVert = arrayUnique(eliminarVert.concat(eliminarAbajo));
-      console.log(eliminarVert);
       if(eliminarVert.length<3){
         eliminarVert=[];
       }
@@ -163,7 +157,7 @@ function parpadearCandyStop(items) {
           $(imagenUno).attr("src", imgDos);
           $(imagenDos).attr("src", imgUno);
           chequear ($(imagenUno).attr("id"));
-          chequear ($(imagenDos).attr("id"));
+//          chequear ($(imagenDos).attr("id"));
       }
       });
       $("img").css({
@@ -178,16 +172,92 @@ function parpadearCandyStop(items) {
 
 //Valida tablero
 function validaTablero(){
-    for(var i =1; i<8; i++){
-      for(var j=1;j<8;j++){
-        chequear (i+""+j);
+  var num = 0;
+  var uno = [];
+  for (var i=1; i<8;i++){
+    for (var j=1; j<8;j++){
+      uno=arrayUnique(uno.concat(CHEKEADO (i+""+j)));
       }
-    }
+  }
+  if(uno.length>0){
+      setTimeout(function() {
+          parpadearCandy(uno);
+      }, 500);
+      parpadearCandyStop(uno);
+      eliminaCandy(uno);
+      agregaCandy(uno);
+      setTimeout(function() {
+          validaTablero();
+        }, 2000);
+  }
 }
+
+//VAlIDA LINEAS
+function CHEKEADO(item){
+  var imgClick = $("#"+item).attr("src");
+  var itemArray = item.split("");
+  var fila = itemArray[0];
+  var columna = itemArray[1];
+  //Chequea Verticalmente
+  var eliminarAbajo=[];
+  for(var i = fila ; i >= 1 ; i--){
+    var imagen = $("#"+(i+columna)).attr("src");
+    if(imgClick==imagen){
+      eliminarAbajo.push((i+columna));
+    }else {
+      break;
+    }
+  }
+  var eliminarArriba=[];
+  for(var i = fila ; i < 8 ; i++){
+    var imagen = $("#"+(i+columna)).attr("src");
+    if(imgClick==imagen){
+      eliminarArriba.push((i+columna));
+    }else {
+      break;
+    }
+  }
+  //Elimina Horizontales
+  var eliminarDerecha=[];
+  for(var i = columna ; i < 8 ; i++){
+    var imgen = $("#"+(fila+i)).attr("src");
+    if(imgClick==imgen){
+      eliminarDerecha.push((fila+i));
+    }else {
+      break;
+    }
+  }
+  var eliminarIzquierda=[];
+  for(var i = columna ; i >= 1 ; i--){
+    var imgen = $("#"+(fila+i)).attr("src");
+    if(imgClick==imgen){
+      eliminarIzquierda.push((fila+i));
+    }else {
+      break;
+    }
+  }
+  var eliminarVert=[];
+  var eliminarHorz=[];
+  eliminarHorz = arrayUnique(eliminarHorz.concat(eliminarIzquierda));
+  eliminarHorz = arrayUnique(eliminarHorz.concat(eliminarDerecha));
+  if(eliminarHorz.length<3){
+    eliminarHorz=[];
+  }
+  eliminarVert = arrayUnique(eliminarVert.concat(eliminarArriba));
+  eliminarVert = arrayUnique(eliminarVert.concat(eliminarAbajo));
+  if(eliminarVert.length<3){
+    eliminarVert=[];
+  }
+  var eliminar = arrayUnique(eliminarVert.concat(eliminarHorz));
+  return eliminar;
+  }
 
 //llAMA A FUNCIONES
 $( document ).ready(function() {
   console.log( "document loaded" );
   estructura();
+  $(".btn-reinicio").click(function(){
+    validaTablero();
+  });
   parpadear();
 });
