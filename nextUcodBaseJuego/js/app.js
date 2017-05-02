@@ -221,7 +221,7 @@ function initialize(){
   $("#score-text").text("0");
   $("#timer").text("0:00");
   $('#timer').timer({
-   duration: '20s',
+   duration: '2m',
    format: '%M:%S',
    callback: function(){
       fin();
