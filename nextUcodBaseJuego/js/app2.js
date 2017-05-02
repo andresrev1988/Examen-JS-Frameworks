@@ -60,76 +60,26 @@ function parpadearCandyStop(items) {
       }
     }
   //Verifica y efecto 3 en linea vertucal
-  function chequear(item){
-      var imgClick = $("#"+item).attr("src");
-      var itemArray = item.split("");
-      var fila = itemArray[0];
-      var columna = itemArray[1];
-      //Chequea Verticalmente
-      var eliminarAbajo=[];
-      for(var i = fila ; i >= 1 ; i--){
-        var imagen = $("#"+(i+columna)).attr("src");
-        if(imgClick==imagen){
-          eliminarAbajo.push((i+columna));
-
-        }else {
-          break;
-        }
-      }
-      var eliminarArriba=[];
-      for(var i = fila ; i < 8 ; i++){
-        var imagen = $("#"+(i+columna)).attr("src");
-        if(imgClick==imagen){
-          eliminarArriba.push((i+columna));
-        }else {
-          break;
-        }
-      }
-      //Elimina Horizontales
-      var eliminarDerecha=[];
-      for(var i = columna ; i < 8 ; i++){
-        var imgen = $("#"+(fila+i)).attr("src");
-        if(imgClick==imgen){
-          eliminarDerecha.push((fila+i));
-        }else {
-          break;
-        }
-      }
-      var eliminarIzquierda=[];
-      for(var i = columna ; i >= 1 ; i--){
-        var imgen = $("#"+(fila+i)).attr("src");
-        if(imgClick==imgen){
-          eliminarIzquierda.push((fila+i));
-        }else {
-          break;
-        }
-      }
-      var eliminarVert=[];
-      var eliminarHorz=[];
-      eliminarHorz = arrayUnique(eliminarHorz.concat(eliminarIzquierda));
-      eliminarHorz = arrayUnique(eliminarHorz.concat(eliminarDerecha));
-      if(eliminarHorz.length<3){
-        eliminarHorz=[];
-      }
-      eliminarVert = arrayUnique(eliminarVert.concat(eliminarArriba));
-      eliminarVert = arrayUnique(eliminarVert.concat(eliminarAbajo));
-      if(eliminarVert.length<3){
-        eliminarVert=[];
-      }
-      var eliminar = arrayUnique(eliminarVert.concat(eliminarHorz));
-      console.log(eliminar);
+  function movimientoAcertado(item){
+      var eliminar = CHEKEADO(item);
       setTimeout(function() {
           parpadearCandy(eliminar);
       }, 500);
       parpadearCandyStop(eliminar);
       eliminaCandy(eliminar);
       agregaCandy(eliminar);
+      setTimeout(function() {
+          validaTablero();
+        }, 1500);
+
   }
   //Elimina Columnas y agrega nuevas
   function eliminaCandy(items){
     setTimeout(function() {
         for (var i=0;i<items.length;i++){
           $("#item"+items[i]).remove();
+          puntaje = puntaje +10;
+          $("#score-text").text(puntaje);
         }
       }, 1000);
   }
@@ -156,8 +106,11 @@ function parpadearCandyStop(items) {
           imgDos = $(imagenDos).attr("src");
           $(imagenUno).attr("src", imgDos);
           $(imagenDos).attr("src", imgUno);
-          chequear ($(imagenUno).attr("id"));
-//          chequear ($(imagenDos).attr("id"));
+          if(imgUno!=imgDos){
+            cont++;
+            $("#movimientos-text").text(cont);
+            movimientoAcertado ($(imagenUno).attr("id"));
+          }
       }
       });
       $("img").css({
@@ -255,9 +208,10 @@ function CHEKEADO(item){
 //llAMA A FUNCIONES
 $( document ).ready(function() {
   console.log( "document loaded" );
+  cont=0;
+  $("#movimientos-text").text("0");
+  puntaje = 0 ;
+  $("#score-text").text("0");
   estructura();
-  $(".btn-reinicio").click(function(){
-    validaTablero();
-  });
   parpadear();
 });
